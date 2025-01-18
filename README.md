@@ -9,4 +9,4 @@
 ![Create Mass Script](Screenshot_20250115-170538.png)
 
 🌟 Checking Account Live Or Die 🌟
-![Create Mass Script](Screenshot_20250115-170538.png)
+![Create Mass Script](Screenshot_20250115-235423.png)
