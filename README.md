@@ -5,8 +5,13 @@
 3. Bot Facebook : Bot Auto Add Friend , Bot Auto Coment , Bot Auto React Dll.
 0. Please Let Me Know If You Find Any Bugs/Menu Requests You Want
 ```
-# 🌟 Auto Create Facebook Account🌟
-![Create Mass Script](Screenshot_20250115-170538.png)
-
-# 🌟 Checking Account Live Or Die 🌟
-![Create Mass Script](Screenshot_20250115-235423.png)
+# 🌟 How To Install Scipt 🌟
+```
+$ pkg update && pkg upgrade
+$ pkg install rich
+$ pkg install python
+$ pkg install git
+$ git clone https://github.com/TakeuchiSan/CreateMass
+$ cd CreateMass
+$ python main.py
+```
