@@ -1,1 +1,1 @@
-import tesh
+import teshk
